@@ -173,9 +173,9 @@ describe('msbuild-finder', function () {
     var expectMSBuildVersion = constants.MSBUILD_VERSIONS[toolsVersion];
 
     var pathRoot = process.env['ProgramFiles'] || path.join('C:', 'Program Files');
-    var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Enterprise');
-    var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Professional');
-    var expectedResult = path.join(vsProfessionalPath, 'MSBuild', '15.0', 'Bin', 'MSBuild.exe');
+    var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Enterprise', 'MSBuild', '15.0');
+    var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Professional', 'MSBuild', '15.0');
+    var expectedResult = path.join(vsProfessionalPath, 'Bin', 'MSBuild.exe');
 
     var mock = this.sinon.mock(fs);
     mock.expects('statSync').withArgs(vsEnterprisePath).throws();
@@ -191,10 +191,10 @@ describe('msbuild-finder', function () {
     var expectMSBuildVersion = constants.MSBUILD_VERSIONS[toolsVersion];
 
     var pathRoot = process.env['ProgramFiles'] || path.join('C:', 'Program Files');
-    var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Enterprise');
-    var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Professional');
-    var vsCommunityPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Community');
-    var expectedResult = path.join(vsCommunityPath, 'MSBuild', '15.0', 'Bin', 'MSBuild.exe');
+    var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Enterprise', 'MSBuild', '15.0');
+    var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Professional', 'MSBuild', '15.0');
+    var vsCommunityPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Community', 'MSBuild', '15.0');
+    var expectedResult = path.join(vsCommunityPath, 'Bin', 'MSBuild.exe');
 
     var mock = this.sinon.mock(fs);
     mock.expects('statSync').withArgs(vsEnterprisePath).throws();
@@ -211,11 +211,11 @@ describe('msbuild-finder', function () {
     var expectMSBuildVersion = constants.MSBUILD_VERSIONS[toolsVersion];
 
     var pathRoot = process.env['ProgramFiles'] || path.join('C:', 'Program Files');
-    var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Enterprise');
-    var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Professional');
-    var vsCommunityPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Community');
-    var vsBuildToolsPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','BuildTools');
-    var expectedResult = path.join(vsBuildToolsPath, 'MSBuild', '15.0', 'Bin', 'MSBuild.exe');
+    var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Enterprise', 'MSBuild', '15.0');
+    var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Professional', 'MSBuild', '15.0');
+    var vsCommunityPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Community', 'MSBuild', '15.0');
+    var vsBuildToolsPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','BuildTools', 'MSBuild', '15.0');
+    var expectedResult = path.join(vsBuildToolsPath, 'Bin', 'MSBuild.exe');
 
     var mock = this.sinon.mock(fs);
     mock.expects('statSync').withArgs(vsEnterprisePath).throws();
@@ -258,6 +258,25 @@ describe('msbuild-finder', function () {
     expect(func).to.throw('No MSBuild Version was supplied!');
   });
 
+  it('should correctly find and use visual studio 2019 msbuild', function () {
+    var toolsVersion = 16.0;
+    var expectMSBuildVersion = constants.MSBUILD_VERSIONS[toolsVersion];
+
+    var pathRoot = process.env['ProgramFiles'] || path.join('C:', 'Program Files');
+    var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2019','Enterprise', 'MSBuild', 'Current');
+    var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2019','Professional', 'MSBuild', 'Current');
+    var vsCommunityPath = path.join(pathRoot, 'Microsoft Visual Studio','2019','Community', 'MSBuild', 'Current');
+    var expectedResult = path.join(vsCommunityPath, 'Bin', 'MSBuild.exe');
+
+    var mock = this.sinon.mock(fs);
+    mock.expects('statSync').withArgs(vsEnterprisePath).throws();
+    mock.expects('statSync').withArgs(vsProfessionalPath).throws();
+    mock.expects('statSync').withArgs(vsCommunityPath).returns({});
+
+    var result = msbuildFinder.find({ platform: 'win32', toolsVersion: toolsVersion, architecture: 'x86' });
+    expect(result).to.be.equal(expectedResult);
+  });
+
   describe('when toolsVersion is \'auto\'', function() {
     var fs = require('fs');
     var mock;
@@ -287,11 +306,11 @@ describe('msbuild-finder', function () {
       var expectMSBuildVersion = constants.MSBUILD_VERSIONS[4.0];
       var pathRoot = process.env['ProgramFiles'] || path.join('C:', 'Program Files');
       var msbuildDir = path.join(pathRoot, 'MSBuild');
-      var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Enterprise');
-      var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Professional');
-      var vsCommunityPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Community');
-      var vsBuildToolsPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','BuildTools');
-      var expectedResult = path.join(pathRoot, 'MSBuild', '15.0', 'Bin/amd64', 'MSBuild.exe');
+      var vsEnterprisePath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Enterprise', 'MSBuild', '15.0');
+      var vsProfessionalPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Professional', 'MSBuild', '15.0');
+      var vsCommunityPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','Community', 'MSBuild', '15.0');
+      var vsBuildToolsPath = path.join(pathRoot, 'Microsoft Visual Studio','2017','BuildTools', 'MSBuild', '15.0');
+      var expectedResult = path.join(pathRoot, 'Bin/amd64', 'MSBuild.exe');
       var expectedResult = path.join(windir, 'Microsoft.Net', 'Framework', expectMSBuildVersion, 'MSBuild.exe');
 
       mock = this.sinon.mock(fs);
